@@ -9,8 +9,8 @@ const Index = () => {
       {/* Title */}
       <div className="absolute top-8 left-0 right-0 z-10 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
-          <span className="bg-gradient-primary bg-clip-text text-transparent">ARious</span>
-          {" "}Logo Model
+          <span className="bg-gradient-primary bg-clip-text text-slate-50">ARious Logo</span>
+          {" "}Model
         </h1>
         <p className="mt-2 text-muted-foreground text-sm md:text-base">
           Hover to interact with the model

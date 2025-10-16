@@ -1,6 +1,20 @@
+import { useState } from "react";
 import { Canvas3D } from "@/components/Canvas3D";
+import { ModelControls } from "@/components/ModelControls";
 
 const Index = () => {
+  const [position, setPosition] = useState({ x: 0, y: 0, z: 0 });
+  const [scale, setScale] = useState(100);
+  const [rotation, setRotation] = useState({ x: 0, y: 0, z: 0 });
+
+  const handlePositionChange = (axis: 'x' | 'y' | 'z', value: number) => {
+    setPosition(prev => ({ ...prev, [axis]: value }));
+  };
+
+  const handleRotationChange = (axis: 'x' | 'y' | 'z', value: number) => {
+    setRotation(prev => ({ ...prev, [axis]: value }));
+  };
+
   return (
     <main className="relative w-full h-screen overflow-hidden bg-gradient-bg">
       {/* Background gradient overlay */}
@@ -17,8 +31,18 @@ const Index = () => {
         </p>
       </div>
 
+      {/* Model Controls */}
+      <ModelControls
+        position={position}
+        scale={scale}
+        rotation={rotation}
+        onPositionChange={handlePositionChange}
+        onScaleChange={setScale}
+        onRotationChange={handleRotationChange}
+      />
+
       {/* 3D Canvas */}
-      <Canvas3D />
+      <Canvas3D position={position} scale={scale} rotation={rotation} />
 
       {/* Subtle glow effect */}
       <div className="absolute inset-0 pointer-events-none">

@@ -4,14 +4,22 @@ import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import sampleTexture from '@/assets/sample-texture.png';
 
-export const Scene3D = () => {
+interface Scene3DProps {
+  position?: { x: number; y: number; z: number };
+  scale?: number;
+  rotation?: { x: number; y: number; z: number };
+}
+
+export const Scene3D = ({ 
+  position = { x: 0, y: 0, z: 0 },
+  scale = 100,
+  rotation = { x: 0, y: 0, z: 0 }
+}: Scene3DProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF('/models/Arious_3DLogo.glb');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const { size } = useThree();
-
-  const initialRotationX = 0;
 
   // Add image texture to one face of the model
   useEffect(() => {
@@ -62,16 +70,17 @@ export const Scene3D = () => {
 
   useFrame(() => {
     if (groupRef.current) {
-      // Limited rotation: 15 degrees X, 10 degrees Y
+      // Apply manual controls
+      groupRef.current.position.set(position.x, position.y, position.z);
+      groupRef.current.scale.setScalar(scale / 100);
+      
+      // Apply base rotation from controls
       const maxRotationX = (25 * Math.PI) / 180;
       const maxRotationY = (15 * Math.PI) / 180;
       
-      const targetRotationX = isHovering 
-        ? initialRotationX + (mousePosition.y * maxRotationX)
-        : initialRotationX;
-      const targetRotationY = isHovering 
-        ? mousePosition.x * maxRotationY
-        : 0;
+      const targetRotationX = rotation.x + (isHovering ? mousePosition.y * maxRotationX : 0);
+      const targetRotationY = rotation.y + (isHovering ? mousePosition.x * maxRotationY : 0);
+      const targetRotationZ = rotation.z;
       
       // Lerp for smooth transitions
       groupRef.current.rotation.x = THREE.MathUtils.lerp(
@@ -82,6 +91,11 @@ export const Scene3D = () => {
       groupRef.current.rotation.y = THREE.MathUtils.lerp(
         groupRef.current.rotation.y,
         targetRotationY,
+        0.03
+      );
+      groupRef.current.rotation.z = THREE.MathUtils.lerp(
+        groupRef.current.rotation.z,
+        targetRotationZ,
         0.03
       );
     }
@@ -97,7 +111,7 @@ export const Scene3D = () => {
       }}
       onPointerMove={handlePointerMove}
     >
-      <primitive object={scene} scale={100} />
+      <primitive object={scene} />
     </group>
   );
 };

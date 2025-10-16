@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, Html } from '@react-three/drei';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import * as THREE from 'three';
+import sampleTexture from '@/assets/sample-texture.png';
 
 export const Scene3D = () => {
   const groupRef = useRef<THREE.Group>(null);
@@ -61,38 +61,13 @@ export const Scene3D = () => {
     >
       <primitive object={scene} scale={100} />
       
-      {/* Lottie animations at the positions */}
-      {/* Left position */}
-      <Html position={[-1.6, 0, 0]} center>
-        <div className="w-24 h-24 pointer-events-none shadow-2xl drop-shadow-2xl">
-          <DotLottieReact
-            src="/animations/Flasks.lottie"
-            loop={true}
-            autoplay
-          />
-        </div>
-      </Html>
-      
-      {/* Right position */}
-      <Html position={[1.6, 0, 0]} center>
-        <div className="w-24 h-24 pointer-events-none shadow-2xl drop-shadow-2xl">
-          <DotLottieReact
-            src="/animations/Flasks.lottie"
-            loop={true}
-            autoplay
-          />
-        </div>
-      </Html>
-      
-      {/* Bottom position */}
-      <Html position={[0, -1.6, 0]} center>
-        <div className="w-24 h-24 pointer-events-none shadow-2xl drop-shadow-2xl">
-          <DotLottieReact
-            src="/animations/Flasks.lottie"
-            loop={true}
-            autoplay
-          />
-        </div>
+      {/* Sample image on front face */}
+      <Html position={[0, 0, 1.2]} center>
+        <img 
+          src={sampleTexture} 
+          alt="Sample texture" 
+          className="w-32 h-32 pointer-events-none shadow-2xl drop-shadow-2xl rounded-lg"
+        />
       </Html>
     </group>
   );

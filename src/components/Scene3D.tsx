@@ -24,7 +24,7 @@ export const Scene3D = ({
   // Animation state
   const animationProgress = useRef(0);
   const startPosition = useRef({ x: 0, y: 0, z: 0 });
-  const startScale = useRef(100);
+  const startScale = useRef(20000);
   const startRotation = useRef({ x: 0, y: 0, z: 0 });
   const targetPosition = useRef(position);
   const targetScale = useRef(scale);

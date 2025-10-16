@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, Html } from '@react-three/drei';
+import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import sampleTexture from '@/assets/sample-texture.png';
 
@@ -12,6 +12,44 @@ export const Scene3D = () => {
   const { size } = useThree();
 
   const initialRotationX = 0;
+
+  // Add image texture to one face of the model
+  useEffect(() => {
+    if (scene && groupRef.current) {
+      // Find the main mesh (first mesh in the scene)
+      const mesh = scene.children.find(child => child instanceof THREE.Mesh) || scene.children[0];
+      
+      if (mesh) {
+        // Calculate bounding box
+        const box = new THREE.Box3().setFromObject(mesh);
+        const boxSize = new THREE.Vector3();
+        box.getSize(boxSize);
+
+        // Load texture
+        const textureLoader = new THREE.TextureLoader();
+        const tex = textureLoader.load(sampleTexture);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+
+        // Create plane geometry for the +Z face (front)
+        const planeGeo = new THREE.PlaneGeometry(boxSize.x * 0.3, boxSize.y * 0.3);
+        const planeMat = new THREE.MeshBasicMaterial({ 
+          map: tex, 
+          transparent: true,
+          side: THREE.DoubleSide
+        });
+        const face = new THREE.Mesh(planeGeo, planeMat);
+
+        // Position on the +Z face
+        const EPS = 0.001;
+        face.position.set(0, 0, boxSize.z / 2 + EPS);
+
+        // Add to the mesh
+        mesh.add(face);
+      }
+    }
+  }, [scene]);
   
   const handlePointerMove = (event: any) => {
     if (isHovering) {
@@ -60,15 +98,6 @@ export const Scene3D = () => {
       onPointerMove={handlePointerMove}
     >
       <primitive object={scene} scale={100} />
-      
-      {/* Sample image on front face */}
-      <Html position={[0, 0, 1.2]} center>
-        <img 
-          src={sampleTexture} 
-          alt="Sample texture" 
-          className="w-32 h-32 pointer-events-none shadow-2xl drop-shadow-2xl rounded-lg"
-        />
-      </Html>
     </group>
   );
 };

@@ -20,6 +20,34 @@ export const Scene3D = ({
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const { size } = useThree();
+  
+  // Animation state
+  const animationProgress = useRef(0);
+  const startPosition = useRef({ x: 0, y: 0, z: 0 });
+  const startScale = useRef(100);
+  const startRotation = useRef({ x: 0, y: 0, z: 0 });
+  const targetPosition = useRef(position);
+  const targetScale = useRef(scale);
+  const targetRotation = useRef(rotation);
+  const isAnimating = useRef(true);
+
+  // Update targets when props change
+  useEffect(() => {
+    if (!isAnimating.current) {
+      targetPosition.current = position;
+      targetScale.current = scale;
+      targetRotation.current = rotation;
+      isAnimating.current = true;
+      animationProgress.current = 0;
+      
+      // Store current values as start
+      if (groupRef.current) {
+        startPosition.current = { ...targetPosition.current };
+        startScale.current = targetScale.current;
+        startRotation.current = { ...targetRotation.current };
+      }
+    }
+  }, [position, scale, rotation]);
 
   // Add image texture to one face of the model
   useEffect(() => {
@@ -68,36 +96,75 @@ export const Scene3D = ({
     }
   };
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (groupRef.current) {
-      // Apply manual controls
-      groupRef.current.position.set(position.x, position.y, position.z);
-      groupRef.current.scale.setScalar(scale / 100);
-      
-      // Apply base rotation from controls
-      const maxRotationX = (25 * Math.PI) / 180;
-      const maxRotationY = (15 * Math.PI) / 180;
-      
-      const targetRotationX = rotation.x + (isHovering ? mousePosition.y * maxRotationX : 0);
-      const targetRotationY = rotation.y + (isHovering ? mousePosition.x * maxRotationY : 0);
-      const targetRotationZ = rotation.z;
-      
-      // Lerp for smooth transitions
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(
-        groupRef.current.rotation.x,
-        targetRotationX,
-        0.03
-      );
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(
-        groupRef.current.rotation.y,
-        targetRotationY,
-        0.03
-      );
-      groupRef.current.rotation.z = THREE.MathUtils.lerp(
-        groupRef.current.rotation.z,
-        targetRotationZ,
-        0.03
-      );
+      // Animate to target values
+      if (isAnimating.current && animationProgress.current < 1) {
+        animationProgress.current = Math.min(animationProgress.current + delta * 0.5, 1);
+        
+        // Easing function (ease-out cubic)
+        const eased = 1 - Math.pow(1 - animationProgress.current, 3);
+        
+        // Interpolate position
+        const currentPos = {
+          x: THREE.MathUtils.lerp(startPosition.current.x, targetPosition.current.x, eased),
+          y: THREE.MathUtils.lerp(startPosition.current.y, targetPosition.current.y, eased),
+          z: THREE.MathUtils.lerp(startPosition.current.z, targetPosition.current.z, eased),
+        };
+        
+        // Interpolate scale
+        const currentScale = THREE.MathUtils.lerp(startScale.current, targetScale.current, eased);
+        
+        // Interpolate rotation
+        const currentRot = {
+          x: THREE.MathUtils.lerp(startRotation.current.x, targetRotation.current.x, eased),
+          y: THREE.MathUtils.lerp(startRotation.current.y, targetRotation.current.y, eased),
+          z: THREE.MathUtils.lerp(startRotation.current.z, targetRotation.current.z, eased),
+        };
+        
+        groupRef.current.position.set(currentPos.x, currentPos.y, currentPos.z);
+        groupRef.current.scale.setScalar(currentScale / 100);
+        
+        // Apply rotation with hover effect
+        const maxRotationX = (25 * Math.PI) / 180;
+        const maxRotationY = (15 * Math.PI) / 180;
+        
+        groupRef.current.rotation.x = currentRot.x + (isHovering ? mousePosition.y * maxRotationX : 0);
+        groupRef.current.rotation.y = currentRot.y + (isHovering ? mousePosition.x * maxRotationY : 0);
+        groupRef.current.rotation.z = currentRot.z;
+        
+        if (animationProgress.current >= 1) {
+          isAnimating.current = false;
+        }
+      } else {
+        // After animation, apply controls directly with hover effect
+        groupRef.current.position.set(targetPosition.current.x, targetPosition.current.y, targetPosition.current.z);
+        groupRef.current.scale.setScalar(targetScale.current / 100);
+        
+        const maxRotationX = (25 * Math.PI) / 180;
+        const maxRotationY = (15 * Math.PI) / 180;
+        
+        const targetRotX = targetRotation.current.x + (isHovering ? mousePosition.y * maxRotationX : 0);
+        const targetRotY = targetRotation.current.y + (isHovering ? mousePosition.x * maxRotationY : 0);
+        const targetRotZ = targetRotation.current.z;
+        
+        // Smooth lerp for hover transitions
+        groupRef.current.rotation.x = THREE.MathUtils.lerp(
+          groupRef.current.rotation.x,
+          targetRotX,
+          0.05
+        );
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(
+          groupRef.current.rotation.y,
+          targetRotY,
+          0.05
+        );
+        groupRef.current.rotation.z = THREE.MathUtils.lerp(
+          groupRef.current.rotation.z,
+          targetRotZ,
+          0.05
+        );
+      }
     }
   });
 

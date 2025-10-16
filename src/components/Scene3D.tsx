@@ -33,7 +33,7 @@ export const Scene3D = () => {
         tex.magFilter = THREE.LinearFilter;
 
         // Create plane geometry for the +Z face (front)
-        const planeGeo = new THREE.PlaneGeometry(boxSize.x * 0.3, boxSize.y * 0.3);
+        const planeGeo = new THREE.PlaneGeometry(boxSize.x * 1, boxSize.y * 1);
         const planeMat = new THREE.MeshBasicMaterial({ 
           map: tex, 
           transparent: true,

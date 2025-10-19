@@ -14,12 +14,12 @@ const Index = () => {
   });
 
   const animateToState1 = () => {
-    setPosition({ x: 0.8, y: -1.9, z: 9.7 });
-    setScale(22000);
+    setPosition({ x: 0.70, y: -1.50, z: 6.60 });
+    setScale(20000);
     setRotation({
-      x: (51 * Math.PI) / 180,
-      y: (117 * Math.PI) / 180,
-      z: (13 * Math.PI) / 180,
+      x: (-17 * Math.PI) / 180,
+      y: (-13 * Math.PI) / 180,
+      z: (-63 * Math.PI) / 180,
     });
   };
 

@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { Environment, PerspectiveCamera } from '@react-three/drei';
 import { Scene3D } from './Scene3D';
+import * as THREE from 'three';
 
 interface Canvas3DProps {
   position?: { x: number; y: number; z: number };
@@ -8,9 +9,10 @@ interface Canvas3DProps {
   rotation?: { x: number; y: number; z: number };
   sensitivity?: number;
   onAnimationProgress?: (progress: number) => void;
+  onSceneReady?: (scene: THREE.Group) => void;
 }
 
-export const Canvas3D = ({ position, scale, rotation, sensitivity, onAnimationProgress }: Canvas3DProps) => {
+export const Canvas3D = ({ position, scale, rotation, sensitivity, onAnimationProgress, onSceneReady }: Canvas3DProps) => {
   return (
     <div className="w-full h-screen">
       <Canvas shadows>
@@ -29,7 +31,14 @@ export const Canvas3D = ({ position, scale, rotation, sensitivity, onAnimationPr
         <pointLight position={[10, 10, 5]} intensity={0.5} color="#6366f1" />
 
         {/* 3D Model */}
-        <Scene3D position={position} scale={scale} rotation={rotation} sensitivity={sensitivity} onAnimationProgress={onAnimationProgress} />
+        <Scene3D 
+          position={position} 
+          scale={scale} 
+          rotation={rotation} 
+          sensitivity={sensitivity} 
+          onAnimationProgress={onAnimationProgress}
+          onSceneReady={onSceneReady}
+        />
 
         {/* Environment for reflections */}
         <Environment preset="city" />

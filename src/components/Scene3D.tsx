@@ -10,6 +10,7 @@ interface Scene3DProps {
   rotation?: { x: number; y: number; z: number };
   sensitivity?: number;
   onAnimationProgress?: (progress: number) => void;
+  onSceneReady?: (scene: THREE.Group) => void;
 }
 
 export const Scene3D = ({
@@ -18,6 +19,7 @@ export const Scene3D = ({
   rotation = { x: 0, y: 0, z: 0 },
   sensitivity = 1.0,
   onAnimationProgress,
+  onSceneReady,
 }: Scene3DProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/Arious_3DLogo.glb");
@@ -58,6 +60,13 @@ export const Scene3D = ({
     isAnimating.current = true;
     animationProgress.current = 0;
   }, [position, scale, rotation]);
+
+  // Notify parent when scene is ready
+  useEffect(() => {
+    if (scene && onSceneReady) {
+      onSceneReady(scene);
+    }
+  }, [scene, onSceneReady]);
 
   // Add image texture to one face of the model
   useEffect(() => {

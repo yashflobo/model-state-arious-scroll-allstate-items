@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Canvas3D } from "@/components/Canvas3D";
 import { ModelControls } from "@/components/ModelControls";
+import { EditFacesPanel } from "@/components/EditFacesPanel";
 import { Button } from "@/components/ui/button";
+import * as THREE from "three";
 
 const Index = () => {
   // Initial default position
@@ -19,6 +21,8 @@ const Index = () => {
   const [isFadingOut2, setIsFadingOut2] = useState(false);
   const [currentAnimatingState, setCurrentAnimatingState] = useState<'state1' | 'state2' | null>(null);
   const [showControls, setShowControls] = useState(true);
+  const [showEditFaces, setShowEditFaces] = useState(false);
+  const [modelScene, setModelScene] = useState<THREE.Group | null>(null);
 
   const animateToState1 = () => {
     setPosition({ x: 0.7, y: -1.5, z: 6.6 });
@@ -122,6 +126,9 @@ const Index = () => {
           <Button onClick={() => setShowControls(!showControls)} variant="secondary">
             {showControls ? 'Hide' : 'Show'} Controls
           </Button>
+          <Button onClick={() => setShowEditFaces(!showEditFaces)} variant="secondary">
+            Edit Faces
+          </Button>
         </div>
       </div>
 
@@ -138,6 +145,9 @@ const Index = () => {
           onSensitivityChange={setSensitivity}
         />
       )}
+
+      {/* Edit Faces Panel */}
+      {showEditFaces && <EditFacesPanel scene={modelScene} />}
 
       {/* State 1 Text Display */}
       {showState1Text && (
@@ -164,7 +174,14 @@ const Index = () => {
       )}
 
       {/* 3D Canvas */}
-      <Canvas3D position={position} scale={scale} rotation={rotation} sensitivity={sensitivity} onAnimationProgress={handleAnimationProgress} />
+      <Canvas3D 
+        position={position} 
+        scale={scale} 
+        rotation={rotation} 
+        sensitivity={sensitivity} 
+        onAnimationProgress={handleAnimationProgress}
+        onSceneReady={setModelScene}
+      />
 
       {/* Subtle glow effect */}
       <div className="absolute inset-0 pointer-events-none">

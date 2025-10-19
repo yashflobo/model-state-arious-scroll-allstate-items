@@ -15,7 +15,7 @@ const Index = () => {
   const [sensitivity, setSensitivity] = useState(1.0);
 
   const animateToState1 = () => {
-    setPosition({ x: 0.70, y: -1.50, z: 6.60 });
+    setPosition({ x: 0.7, y: -1.5, z: 6.6 });
     setScale(20000);
     setRotation({
       x: (-17 * Math.PI) / 180,
@@ -25,7 +25,7 @@ const Index = () => {
   };
 
   const animateToState2 = () => {
-    setPosition({ x: -0.70, y: -1.50, z: 6.60 });
+    setPosition({ x: -0.7, y: -1.5, z: 6.6 });
     setScale(20000);
     setRotation({
       x: (-17 * Math.PI) / 180,
@@ -49,7 +49,7 @@ const Index = () => {
   };
 
   return (
-    <main className="relative w-full h-screen overflow-hidden bg-gradient-bg">
+    <main className="relative w-full h-screen overflow-hidden bg-black">
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
 
@@ -60,12 +60,8 @@ const Index = () => {
         </h1>
         <p className="mt-2 text-muted-foreground text-sm md:text-base">Hover to interact with the model</p>
         <div className="flex gap-3 mt-4 justify-center">
-          <Button onClick={animateToState1}>
-            State 1
-          </Button>
-          <Button onClick={animateToState2}>
-            State 2
-          </Button>
+          <Button onClick={animateToState1}>State 1</Button>
+          <Button onClick={animateToState2}>State 2</Button>
           <Button onClick={resetToDefault} variant="outline">
             Reset
           </Button>

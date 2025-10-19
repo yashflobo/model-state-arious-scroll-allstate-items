@@ -113,7 +113,7 @@ const Index = () => {
       {/* State 1 Text Display */}
       {showState1Text && (
         <div className={`absolute right-8 top-1/2 -translate-y-1/2 z-20 ${isFadingOut ? 'animate-fade-out' : 'animate-fade-in'}`}>
-          <div className="bg-card/80 p-6 max-w-md">
+          <div className="p-6 max-w-md">
             <h2 className="text-2xl font-bold mb-3 text-foreground">State 1 Active</h2>
             <p className="text-muted-foreground">
               Sample text content that appears when State 1 animation is nearly complete.

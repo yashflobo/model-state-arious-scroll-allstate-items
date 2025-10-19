@@ -13,6 +13,9 @@ const Index = () => {
     z: 0,
   });
   const [sensitivity, setSensitivity] = useState(1.0);
+  const [showState1Text, setShowState1Text] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [currentAnimatingState, setCurrentAnimatingState] = useState<'state1' | 'state2' | null>(null);
 
   const animateToState1 = () => {
     setPosition({ x: 0.7, y: -1.5, z: 6.6 });
@@ -22,6 +25,9 @@ const Index = () => {
       y: (-13 * Math.PI) / 180,
       z: (-63 * Math.PI) / 180,
     });
+    setCurrentAnimatingState('state1');
+    setShowState1Text(false);
+    setIsFadingOut(false);
   };
 
   const animateToState2 = () => {
@@ -32,12 +38,36 @@ const Index = () => {
       y: (13 * Math.PI) / 180,
       z: (63 * Math.PI) / 180,
     });
+    setCurrentAnimatingState('state2');
+    // Hide text with fade-out
+    if (showState1Text) {
+      setIsFadingOut(true);
+      setTimeout(() => {
+        setShowState1Text(false);
+        setIsFadingOut(false);
+      }, 300);
+    }
   };
 
   const resetToDefault = () => {
     setPosition({ x: 0, y: 0, z: 0 });
     setScale(20000);
     setRotation({ x: 0, y: 0, z: 0 });
+    setCurrentAnimatingState(null);
+    // Hide text with fade-out
+    if (showState1Text) {
+      setIsFadingOut(true);
+      setTimeout(() => {
+        setShowState1Text(false);
+        setIsFadingOut(false);
+      }, 300);
+    }
+  };
+
+  const handleAnimationProgress = (progress: number) => {
+    if (currentAnimatingState === 'state1' && progress >= 0.8 && !showState1Text) {
+      setShowState1Text(true);
+    }
   };
 
   const handlePositionChange = (axis: "x" | "y" | "z", value: number) => {
@@ -80,8 +110,20 @@ const Index = () => {
         onSensitivityChange={setSensitivity}
       />
 
+      {/* State 1 Text Display */}
+      {showState1Text && (
+        <div className={`absolute right-8 top-1/2 -translate-y-1/2 z-20 ${isFadingOut ? 'animate-fade-out' : 'animate-fade-in'}`}>
+          <div className="bg-card/80 backdrop-blur-sm border border-border rounded-lg p-6 max-w-md">
+            <h2 className="text-2xl font-bold mb-3 text-foreground">State 1 Active</h2>
+            <p className="text-muted-foreground">
+              Sample text content that appears when State 1 animation is nearly complete.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* 3D Canvas */}
-      <Canvas3D position={position} scale={scale} rotation={rotation} sensitivity={sensitivity} />
+      <Canvas3D position={position} scale={scale} rotation={rotation} sensitivity={sensitivity} onAnimationProgress={handleAnimationProgress} />
 
       {/* Subtle glow effect */}
       <div className="absolute inset-0 pointer-events-none">

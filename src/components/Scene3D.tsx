@@ -9,6 +9,7 @@ interface Scene3DProps {
   scale?: number;
   rotation?: { x: number; y: number; z: number };
   sensitivity?: number;
+  onAnimationProgress?: (progress: number) => void;
 }
 
 export const Scene3D = ({
@@ -16,6 +17,7 @@ export const Scene3D = ({
   scale = 100,
   rotation = { x: 0, y: 0, z: 0 },
   sensitivity = 1.0,
+  onAnimationProgress,
 }: Scene3DProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/Arious_3DLogo.glb");
@@ -109,6 +111,11 @@ export const Scene3D = ({
       // Animate to target values over 1.5 seconds
       if (isAnimating.current && animationProgress.current < 1) {
         animationProgress.current = Math.min(animationProgress.current + delta / 1.5, 1);
+
+        // Call the progress callback
+        if (onAnimationProgress) {
+          onAnimationProgress(animationProgress.current);
+        }
 
         // Easing function (ease-out cubic)
         const eased = 1 - Math.pow(1 - animationProgress.current, 3);

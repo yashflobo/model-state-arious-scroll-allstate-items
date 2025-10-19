@@ -23,6 +23,16 @@ const Index = () => {
     });
   };
 
+  const animateToState2 = () => {
+    setPosition({ x: -0.70, y: -1.50, z: 6.60 });
+    setScale(20000);
+    setRotation({
+      x: (-17 * Math.PI) / 180,
+      y: (13 * Math.PI) / 180,
+      z: (63 * Math.PI) / 180,
+    });
+  };
+
   const resetToDefault = () => {
     setPosition({ x: 0, y: 0, z: 0 });
     setScale(20000);
@@ -50,7 +60,10 @@ const Index = () => {
         <p className="mt-2 text-muted-foreground text-sm md:text-base">Hover to interact with the model</p>
         <div className="flex gap-3 mt-4 justify-center">
           <Button onClick={animateToState1}>
-            state1
+            State 1
+          </Button>
+          <Button onClick={animateToState2}>
+            State 2
           </Button>
           <Button onClick={resetToDefault} variant="outline">
             Reset

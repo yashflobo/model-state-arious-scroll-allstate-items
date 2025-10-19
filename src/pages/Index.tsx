@@ -14,7 +14,9 @@ const Index = () => {
   });
   const [sensitivity, setSensitivity] = useState(1.0);
   const [showState1Text, setShowState1Text] = useState(false);
+  const [showState2Text, setShowState2Text] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const [isFadingOut2, setIsFadingOut2] = useState(false);
   const [currentAnimatingState, setCurrentAnimatingState] = useState<'state1' | 'state2' | null>(null);
   const [showControls, setShowControls] = useState(true);
 
@@ -29,6 +31,14 @@ const Index = () => {
     setCurrentAnimatingState('state1');
     setShowState1Text(false);
     setIsFadingOut(false);
+    // Hide State 2 text with fade-out
+    if (showState2Text) {
+      setIsFadingOut2(true);
+      setTimeout(() => {
+        setShowState2Text(false);
+        setIsFadingOut2(false);
+      }, 300);
+    }
   };
 
   const animateToState2 = () => {
@@ -40,7 +50,9 @@ const Index = () => {
       z: (63 * Math.PI) / 180,
     });
     setCurrentAnimatingState('state2');
-    // Hide text with fade-out
+    setShowState2Text(false);
+    setIsFadingOut2(false);
+    // Hide State 1 text with fade-out
     if (showState1Text) {
       setIsFadingOut(true);
       setTimeout(() => {
@@ -55,7 +67,7 @@ const Index = () => {
     setScale(20000);
     setRotation({ x: 0, y: 0, z: 0 });
     setCurrentAnimatingState(null);
-    // Hide text with fade-out
+    // Hide State 1 text with fade-out
     if (showState1Text) {
       setIsFadingOut(true);
       setTimeout(() => {
@@ -63,11 +75,22 @@ const Index = () => {
         setIsFadingOut(false);
       }, 300);
     }
+    // Hide State 2 text with fade-out
+    if (showState2Text) {
+      setIsFadingOut2(true);
+      setTimeout(() => {
+        setShowState2Text(false);
+        setIsFadingOut2(false);
+      }, 300);
+    }
   };
 
   const handleAnimationProgress = (progress: number) => {
     if (currentAnimatingState === 'state1' && progress >= 0.8 && !showState1Text) {
       setShowState1Text(true);
+    }
+    if (currentAnimatingState === 'state2' && progress >= 0.8 && !showState2Text) {
+      setShowState2Text(true);
     }
   };
 
@@ -123,6 +146,18 @@ const Index = () => {
             <h2 className="text-2xl font-bold mb-3 text-foreground">State 1 Active</h2>
             <p className="text-muted-foreground">
               Sample text content that appears when State 1 animation is nearly complete.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* State 2 Text Display */}
+      {showState2Text && (
+        <div className={`absolute left-8 top-[30%] -translate-y-1/2 z-20 ${isFadingOut2 ? 'animate-fade-out' : 'animate-fade-in'}`}>
+          <div className="p-6 max-w-md">
+            <h2 className="text-2xl font-bold mb-3 text-foreground">State 2 Active</h2>
+            <p className="text-muted-foreground">
+              Sample text content that appears when State 2 animation is nearly complete.
             </p>
           </div>
         </div>

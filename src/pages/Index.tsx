@@ -1,16 +1,27 @@
 import { useState } from "react";
 import { Canvas3D } from "@/components/Canvas3D";
 import { ModelControls } from "@/components/ModelControls";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
-  // Target position from the image
-  const [position, setPosition] = useState({ x: 0.8, y: -1.9, z: 9.7 });
-  const [scale, setScale] = useState(22000);
+  // Initial default position
+  const [position, setPosition] = useState({ x: 0, y: 0, z: 0 });
+  const [scale, setScale] = useState(20000);
   const [rotation, setRotation] = useState({
-    x: (51 * Math.PI) / 180,
-    y: (117 * Math.PI) / 180,
-    z: (13 * Math.PI) / 180,
+    x: 0,
+    y: 0,
+    z: 0,
   });
+
+  const animateToState1 = () => {
+    setPosition({ x: 0.8, y: -1.9, z: 9.7 });
+    setScale(22000);
+    setRotation({
+      x: (51 * Math.PI) / 180,
+      y: (117 * Math.PI) / 180,
+      z: (13 * Math.PI) / 180,
+    });
+  };
 
   const handlePositionChange = (axis: "x" | "y" | "z", value: number) => {
     setPosition((prev) => ({ ...prev, [axis]: value }));
@@ -31,6 +42,9 @@ const Index = () => {
           <span className="bg-gradient-primary bg-clip-text text-slate-50">ARious Logo</span> Model
         </h1>
         <p className="mt-2 text-muted-foreground text-sm md:text-base">Hover to interact with the model</p>
+        <Button onClick={animateToState1} className="mt-4">
+          state1
+        </Button>
       </div>
 
       {/* Model Controls */}

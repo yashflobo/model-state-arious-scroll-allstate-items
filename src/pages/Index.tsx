@@ -16,6 +16,7 @@ const Index = () => {
   const [showState1Text, setShowState1Text] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [currentAnimatingState, setCurrentAnimatingState] = useState<'state1' | 'state2' | null>(null);
+  const [showControls, setShowControls] = useState(true);
 
   const animateToState1 = () => {
     setPosition({ x: 0.7, y: -1.5, z: 6.6 });
@@ -95,20 +96,25 @@ const Index = () => {
           <Button onClick={resetToDefault} variant="outline">
             Reset
           </Button>
+          <Button onClick={() => setShowControls(!showControls)} variant="secondary">
+            {showControls ? 'Hide' : 'Show'} Controls
+          </Button>
         </div>
       </div>
 
       {/* Model Controls */}
-      <ModelControls
-        position={position}
-        scale={scale}
-        rotation={rotation}
-        sensitivity={sensitivity}
-        onPositionChange={handlePositionChange}
-        onScaleChange={setScale}
-        onRotationChange={handleRotationChange}
-        onSensitivityChange={setSensitivity}
-      />
+      {showControls && (
+        <ModelControls
+          position={position}
+          scale={scale}
+          rotation={rotation}
+          sensitivity={sensitivity}
+          onPositionChange={handlePositionChange}
+          onScaleChange={setScale}
+          onRotationChange={handleRotationChange}
+          onSensitivityChange={setSensitivity}
+        />
+      )}
 
       {/* State 1 Text Display */}
       {showState1Text && (

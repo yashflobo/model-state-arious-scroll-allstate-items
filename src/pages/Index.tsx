@@ -12,6 +12,7 @@ const Index = () => {
     y: 0,
     z: 0,
   });
+  const [sensitivity, setSensitivity] = useState(1.0);
 
   const animateToState1 = () => {
     setPosition({ x: 0.70, y: -1.50, z: 6.60 });
@@ -76,13 +77,15 @@ const Index = () => {
         position={position}
         scale={scale}
         rotation={rotation}
+        sensitivity={sensitivity}
         onPositionChange={handlePositionChange}
         onScaleChange={setScale}
         onRotationChange={handleRotationChange}
+        onSensitivityChange={setSensitivity}
       />
 
       {/* 3D Canvas */}
-      <Canvas3D position={position} scale={scale} rotation={rotation} />
+      <Canvas3D position={position} scale={scale} rotation={rotation} sensitivity={sensitivity} />
 
       {/* Subtle glow effect */}
       <div className="absolute inset-0 pointer-events-none">

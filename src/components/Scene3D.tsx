@@ -8,12 +8,14 @@ interface Scene3DProps {
   position?: { x: number; y: number; z: number };
   scale?: number;
   rotation?: { x: number; y: number; z: number };
+  sensitivity?: number;
 }
 
 export const Scene3D = ({ 
   position = { x: 0, y: 0, z: 0 },
   scale = 100,
-  rotation = { x: 0, y: 0, z: 0 }
+  rotation = { x: 0, y: 0, z: 0 },
+  sensitivity = 1.0
 }: Scene3DProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF('/models/Arious_3DLogo.glb');
@@ -132,8 +134,8 @@ export const Scene3D = ({
         groupRef.current.scale.setScalar(currentScale / 100);
         
         // Apply rotation with hover effect
-        const maxRotationX = (25 * Math.PI) / 180;
-        const maxRotationY = (15 * Math.PI) / 180;
+        const maxRotationX = (25 * Math.PI) / 180 * sensitivity;
+        const maxRotationY = (15 * Math.PI) / 180 * sensitivity;
         
         groupRef.current.rotation.x = currentRot.x + (isHovering ? mousePosition.y * maxRotationX : 0);
         groupRef.current.rotation.y = currentRot.y + (isHovering ? mousePosition.x * maxRotationY : 0);
@@ -147,8 +149,8 @@ export const Scene3D = ({
         groupRef.current.position.set(targetPosition.current.x, targetPosition.current.y, targetPosition.current.z);
         groupRef.current.scale.setScalar(targetScale.current / 100);
         
-        const maxRotationX = (25 * Math.PI) / 180;
-        const maxRotationY = (15 * Math.PI) / 180;
+        const maxRotationX = (25 * Math.PI) / 180 * sensitivity;
+        const maxRotationY = (15 * Math.PI) / 180 * sensitivity;
         
         const targetRotX = targetRotation.current.x + (isHovering ? mousePosition.y * maxRotationX : 0);
         const targetRotY = targetRotation.current.y + (isHovering ? mousePosition.x * maxRotationY : 0);

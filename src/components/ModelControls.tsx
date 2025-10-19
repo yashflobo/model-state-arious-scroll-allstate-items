@@ -7,18 +7,22 @@ interface ModelControlsProps {
   position: { x: number; y: number; z: number };
   scale: number;
   rotation: { x: number; y: number; z: number };
+  sensitivity: number;
   onPositionChange: (axis: 'x' | 'y' | 'z', value: number) => void;
   onScaleChange: (value: number) => void;
   onRotationChange: (axis: 'x' | 'y' | 'z', value: number) => void;
+  onSensitivityChange: (value: number) => void;
 }
 
 export const ModelControls = ({
   position,
   scale,
   rotation,
+  sensitivity,
   onPositionChange,
   onScaleChange,
   onRotationChange,
+  onSensitivityChange,
 }: ModelControlsProps) => {
   return (
     <Card className="absolute top-20 right-4 p-4 w-80 bg-background/95 backdrop-blur z-20">
@@ -104,6 +108,27 @@ export const ModelControls = ({
           min={10}
           max={200}
           step={5}
+        />
+      </div>
+
+      {/* Mouse Sensitivity Control */}
+      <div className="space-y-2 mb-6">
+        <h4 className="text-sm font-medium text-muted-foreground">Mouse Sensitivity</h4>
+        <div className="flex items-center justify-between">
+          <Label>Sensitivity</Label>
+          <Input
+            type="number"
+            value={sensitivity.toFixed(1)}
+            onChange={(e) => onSensitivityChange(parseFloat(e.target.value))}
+            className="w-20 h-8"
+          />
+        </div>
+        <Slider
+          value={[sensitivity]}
+          onValueChange={([value]) => onSensitivityChange(value)}
+          min={0}
+          max={3}
+          step={0.1}
         />
       </div>
 

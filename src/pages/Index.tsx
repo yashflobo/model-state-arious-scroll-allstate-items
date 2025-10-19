@@ -23,6 +23,12 @@ const Index = () => {
     });
   };
 
+  const resetToDefault = () => {
+    setPosition({ x: 0, y: 0, z: 0 });
+    setScale(20000);
+    setRotation({ x: 0, y: 0, z: 0 });
+  };
+
   const handlePositionChange = (axis: "x" | "y" | "z", value: number) => {
     setPosition((prev) => ({ ...prev, [axis]: value }));
   };
@@ -42,9 +48,14 @@ const Index = () => {
           <span className="bg-gradient-primary bg-clip-text text-slate-50">ARious Logo</span> Model
         </h1>
         <p className="mt-2 text-muted-foreground text-sm md:text-base">Hover to interact with the model</p>
-        <Button onClick={animateToState1} className="mt-4">
-          state1
-        </Button>
+        <div className="flex gap-3 mt-4 justify-center">
+          <Button onClick={animateToState1}>
+            state1
+          </Button>
+          <Button onClick={resetToDefault} variant="outline">
+            Reset
+          </Button>
+        </div>
       </div>
 
       {/* Model Controls */}

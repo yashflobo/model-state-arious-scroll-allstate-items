@@ -33,20 +33,26 @@ export const Scene3D = ({
 
   // Update targets when props change
   useEffect(() => {
-    if (!isAnimating.current) {
-      targetPosition.current = position;
-      targetScale.current = scale;
-      targetRotation.current = rotation;
-      isAnimating.current = true;
-      animationProgress.current = 0;
-      
-      // Store current values as start
-      if (groupRef.current) {
-        startPosition.current = { ...targetPosition.current };
-        startScale.current = targetScale.current;
-        startRotation.current = { ...targetRotation.current };
-      }
+    // Store current values as start
+    if (groupRef.current) {
+      startPosition.current = { 
+        x: groupRef.current.position.x, 
+        y: groupRef.current.position.y, 
+        z: groupRef.current.position.z 
+      };
+      startScale.current = groupRef.current.scale.x * 100;
+      startRotation.current = { 
+        x: groupRef.current.rotation.x, 
+        y: groupRef.current.rotation.y, 
+        z: groupRef.current.rotation.z 
+      };
     }
+    
+    targetPosition.current = position;
+    targetScale.current = scale;
+    targetRotation.current = rotation;
+    isAnimating.current = true;
+    animationProgress.current = 0;
   }, [position, scale, rotation]);
 
   // Add image texture to one face of the model
@@ -98,9 +104,9 @@ export const Scene3D = ({
 
   useFrame((state, delta) => {
     if (groupRef.current) {
-      // Animate to target values
+      // Animate to target values over 1.5 seconds
       if (isAnimating.current && animationProgress.current < 1) {
-        animationProgress.current = Math.min(animationProgress.current + delta * 0.5, 1);
+        animationProgress.current = Math.min(animationProgress.current + delta / 1.5, 1);
         
         // Easing function (ease-out cubic)
         const eased = 1 - Math.pow(1 - animationProgress.current, 3);

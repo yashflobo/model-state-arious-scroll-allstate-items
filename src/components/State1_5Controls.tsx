@@ -8,6 +8,7 @@ interface State1_5ControlsProps {
   rotation: { x: number; y: number; z: number };
   onPositionChange: (axis: "x" | "y" | "z", value: number) => void;
   onRotationChange: (axis: "x" | "y" | "z", value: number) => void;
+  title?: string;
 }
 
 export const State1_5Controls = ({
@@ -15,10 +16,11 @@ export const State1_5Controls = ({
   rotation,
   onPositionChange,
   onRotationChange,
+  title = "State 1.5 Controls",
 }: State1_5ControlsProps) => {
   return (
     <Card className="absolute left-4 top-32 z-20 p-4 w-80 max-h-[calc(100vh-150px)] overflow-y-auto bg-background/95 backdrop-blur">
-      <h3 className="text-lg font-semibold mb-4 text-foreground">State 1.5 Controls</h3>
+      <h3 className="text-lg font-semibold mb-4 text-foreground">{title}</h3>
       
       {/* Position Controls */}
       <div className="space-y-4 mb-6">

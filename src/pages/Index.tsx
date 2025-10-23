@@ -13,7 +13,8 @@ enum Stage {
   State1_5 = 2, // intermediate state between State1 and Reset1
   Reset1 = 3, // reset after State1
   State2 = 4,
-  Reset2 = 5, // reset after State2
+  State2_5 = 5, // intermediate state between State2 and Reset2
+  Reset2 = 6, // reset after State2
 }
 const MAX_STAGE = Stage.Reset2 as const;
 
@@ -35,16 +36,25 @@ const Index = () => {
   const [showControls, setShowControls] = useState(true);
   const [showEditFaces, setShowEditFaces] = useState(false);
   const [showState1_5Controls, setShowState1_5Controls] = useState(false);
+  const [showState2_5Controls, setShowState2_5Controls] = useState(false);
   const [modelScene, setModelScene] = useState<THREE.Group | null>(null);
   const [scrollStage, setScrollStage] = useState<Stage>(Stage.Initial);
   const isTransitioningRef = useRef(false);
 
   // State 1.5 camera settings (adjustable)
-  const [state1_5Position, setState1_5Position] = useState({ x: 0.5, y: -1.2, z: 6.0 });
+  const [state1_5Position, setState1_5Position] = useState({ x: 0.50, y: -1.40, z: 6.40 });
   const [state1_5Rotation, setState1_5Rotation] = useState({
-    x: (-15 * Math.PI) / 180,
-    y: (-10 * Math.PI) / 180,
-    z: (-60 * Math.PI) / 180,
+    x: (-16.0 * Math.PI) / 180,
+    y: (-7.0 * Math.PI) / 180,
+    z: (-61.0 * Math.PI) / 180,
+  });
+
+  // State 2.5 camera settings (mirrored from State 1.5)
+  const [state2_5Position, setState2_5Position] = useState({ x: -0.50, y: -1.40, z: 6.40 });
+  const [state2_5Rotation, setState2_5Rotation] = useState({
+    x: (-16.0 * Math.PI) / 180,
+    y: (7.0 * Math.PI) / 180,
+    z: (61.0 * Math.PI) / 180,
   });
 
   // Check for reduced motion preference
@@ -84,6 +94,34 @@ const Index = () => {
       setPosition(state1_5Position);
       setScale(20000);
       setRotation(state1_5Rotation);
+      setCurrentAnimatingState(null);
+
+      // Hide all text
+      if (showState1Text) {
+        setIsFadingOut(true);
+        setTimeout(() => {
+          setShowState1Text(false);
+          setIsFadingOut(false);
+        }, 300);
+      }
+      if (showState2Text) {
+        setIsFadingOut2(true);
+        setTimeout(() => {
+          setShowState2Text(false);
+          setIsFadingOut2(false);
+        }, 300);
+      }
+
+      // Resolve after animation completes
+      setTimeout(resolve, prefersReduced ? 0 : 1500);
+    });
+  };
+
+  const animateToState2_5 = (opts?: { direction?: "forward" | "backward" }): Promise<void> => {
+    return new Promise((resolve) => {
+      setPosition(state2_5Position);
+      setScale(20000);
+      setRotation(state2_5Rotation);
       setCurrentAnimatingState(null);
 
       // Hide all text
@@ -193,6 +231,9 @@ const Index = () => {
       case Stage.State2:
         await animateToState2({ direction });
         break;
+      case Stage.State2_5:
+        await animateToState2_5({ direction });
+        break;
       case Stage.Initial:
       case Stage.Reset1:
       case Stage.Reset2:
@@ -292,6 +333,7 @@ const Index = () => {
           <Button onClick={() => animateToState1()}>State 1</Button>
           <Button onClick={() => animateToState1_5()}>State 1.5</Button>
           <Button onClick={() => animateToState2()}>State 2</Button>
+          <Button onClick={() => animateToState2_5()}>State 2.5</Button>
           <Button onClick={() => resetToDefault()} variant="outline">
             Reset
           </Button>
@@ -303,6 +345,9 @@ const Index = () => {
           </Button>
           <Button onClick={() => setShowState1_5Controls(!showState1_5Controls)} variant="secondary">
             State 1.5 Controls
+          </Button>
+          <Button onClick={() => setShowState2_5Controls(!showState2_5Controls)} variant="secondary">
+            State 2.5 Controls
           </Button>
         </div>
       </div>
@@ -335,6 +380,21 @@ const Index = () => {
           onRotationChange={(axis, value) =>
             setState1_5Rotation((prev) => ({ ...prev, [axis]: value }))
           }
+        />
+      )}
+
+      {/* State 2.5 Controls */}
+      {showState2_5Controls && (
+        <State1_5Controls
+          position={state2_5Position}
+          rotation={state2_5Rotation}
+          onPositionChange={(axis, value) =>
+            setState2_5Position((prev) => ({ ...prev, [axis]: value }))
+          }
+          onRotationChange={(axis, value) =>
+            setState2_5Rotation((prev) => ({ ...prev, [axis]: value }))
+          }
+          title="State 2.5 Controls"
         />
       )}
 

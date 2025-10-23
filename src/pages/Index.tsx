@@ -47,14 +47,14 @@ const Index = () => {
   const [ctMachinePosition, setCTMachinePosition] = useState({ 
     x: -0.40,
     y: 0.00,
-    z: 8.30
+    z: -2.0  // Negative Z to position in front of main model
   });
   const [ctMachineRotation, setCTMachineRotation] = useState({
     x: (9.0 * Math.PI) / 180,
     y: (64.0 * Math.PI) / 180,
     z: 0,
   });
-  const [ctMachineScale, setCTMachineScale] = useState(0.10);
+  const [ctMachineScale, setCTMachineScale] = useState(1.5);  // Increased scale for visibility
 
   // Compute visibility based on current stage
   const isCTMachineVisible = scrollStage === Stage.State1 || scrollStage === Stage.State1_5;
@@ -433,9 +433,9 @@ const Index = () => {
           }
           onScaleChange={setCTMachineScale}
           onReset={() => {
-            setCTMachinePosition({ x: -0.40, y: 0.00, z: 8.30 });
+            setCTMachinePosition({ x: -0.40, y: 0.00, z: -2.0 });
             setCTMachineRotation({ x: (9.0 * Math.PI) / 180, y: (64.0 * Math.PI) / 180, z: 0 });
-            setCTMachineScale(0.10);
+            setCTMachineScale(1.5);
           }}
         />
       )}

@@ -26,9 +26,9 @@ export const Scene3D = ({
   onAnimationProgress,
   onSceneReady,
   ctMachineVisible = false,
-  ctMachinePosition = { x: -0.40, y: 0.00, z: 8.30 },
+  ctMachinePosition = { x: -0.40, y: 0.00, z: -2.0 },
   ctMachineRotation = { x: 0, y: 0, z: 0 },
-  ctMachineScale = 0.10,
+  ctMachineScale = 1.5,
 }: Scene3DProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/Arious_3DLogo.glb");

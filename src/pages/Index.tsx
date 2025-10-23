@@ -3,6 +3,7 @@ import { Canvas3D } from "@/components/Canvas3D";
 import { ModelControls } from "@/components/ModelControls";
 import { EditFacesPanel } from "@/components/EditFacesPanel";
 import { State1_5Controls } from "@/components/State1_5Controls";
+import { CTMachineControls } from "@/components/CTMachineControls";
 import { Button } from "@/components/ui/button";
 import * as THREE from "three";
 
@@ -40,6 +41,23 @@ const Index = () => {
   const [modelScene, setModelScene] = useState<THREE.Group | null>(null);
   const [scrollStage, setScrollStage] = useState<Stage>(Stage.Initial);
   const isTransitioningRef = useRef(false);
+
+  // CT Machine state
+  const [showCTMachineControls, setShowCTMachineControls] = useState(false);
+  const [ctMachinePosition, setCTMachinePosition] = useState({ 
+    x: 2.5,  // To the right of main model
+    y: -1.0, // Slightly below center
+    z: 5.0   // In front of camera
+  });
+  const [ctMachineRotation, setCTMachineRotation] = useState({
+    x: 0,
+    y: Math.PI / 4, // 45° to face camera
+    z: 0,
+  });
+  const [ctMachineScale, setCTMachineScale] = useState(1.5);
+
+  // Compute visibility based on current stage
+  const isCTMachineVisible = scrollStage === Stage.State1 || scrollStage === Stage.State1_5;
 
   // State 1.5 camera settings (adjustable)
   const [state1_5Position, setState1_5Position] = useState({ x: 0.50, y: -1.40, z: 6.40 });
@@ -349,6 +367,9 @@ const Index = () => {
           <Button onClick={() => setShowState2_5Controls(!showState2_5Controls)} variant="secondary">
             State 2.5 Controls
           </Button>
+          <Button onClick={() => setShowCTMachineControls(!showCTMachineControls)} variant="secondary">
+            CT Machine Controls
+          </Button>
         </div>
       </div>
 
@@ -398,6 +419,27 @@ const Index = () => {
         />
       )}
 
+      {/* CT Machine Controls */}
+      {showCTMachineControls && (
+        <CTMachineControls
+          position={ctMachinePosition}
+          rotation={ctMachineRotation}
+          scale={ctMachineScale}
+          onPositionChange={(axis, value) =>
+            setCTMachinePosition((prev) => ({ ...prev, [axis]: value }))
+          }
+          onRotationChange={(axis, value) =>
+            setCTMachineRotation((prev) => ({ ...prev, [axis]: value }))
+          }
+          onScaleChange={setCTMachineScale}
+          onReset={() => {
+            setCTMachinePosition({ x: 2.5, y: -1.0, z: 5.0 });
+            setCTMachineRotation({ x: 0, y: Math.PI / 4, z: 0 });
+            setCTMachineScale(1.5);
+          }}
+        />
+      )}
+
       {/* State 1 Text Display */}
       {showState1Text && (
         <div
@@ -434,6 +476,10 @@ const Index = () => {
         sensitivity={sensitivity}
         onAnimationProgress={handleAnimationProgress}
         onSceneReady={setModelScene}
+        ctMachineVisible={isCTMachineVisible}
+        ctMachinePosition={ctMachinePosition}
+        ctMachineRotation={ctMachineRotation}
+        ctMachineScale={ctMachineScale}
       />
 
       {/* Subtle glow effect */}

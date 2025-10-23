@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { Environment, PerspectiveCamera } from '@react-three/drei';
 import { Scene3D } from './Scene3D';
+import { CTMachineModel } from './CTMachineModel';
 import * as THREE from 'three';
 
 interface Canvas3DProps {
@@ -10,9 +11,24 @@ interface Canvas3DProps {
   sensitivity?: number;
   onAnimationProgress?: (progress: number) => void;
   onSceneReady?: (scene: THREE.Group) => void;
+  ctMachineVisible: boolean;
+  ctMachinePosition: { x: number; y: number; z: number };
+  ctMachineRotation: { x: number; y: number; z: number };
+  ctMachineScale: number;
 }
 
-export const Canvas3D = ({ position, scale, rotation, sensitivity, onAnimationProgress, onSceneReady }: Canvas3DProps) => {
+export const Canvas3D = ({ 
+  position, 
+  scale, 
+  rotation, 
+  sensitivity, 
+  onAnimationProgress, 
+  onSceneReady,
+  ctMachineVisible,
+  ctMachinePosition,
+  ctMachineRotation,
+  ctMachineScale
+}: Canvas3DProps) => {
   return (
     <div className="w-full h-screen">
       <Canvas shadows>
@@ -38,6 +54,14 @@ export const Canvas3D = ({ position, scale, rotation, sensitivity, onAnimationPr
           sensitivity={sensitivity} 
           onAnimationProgress={onAnimationProgress}
           onSceneReady={onSceneReady}
+        />
+
+        {/* CT Machine Model */}
+        <CTMachineModel
+          visible={ctMachineVisible}
+          position={ctMachinePosition}
+          rotation={ctMachineRotation}
+          scale={ctMachineScale}
         />
 
         {/* Environment for reflections */}

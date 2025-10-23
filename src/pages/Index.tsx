@@ -23,7 +23,7 @@ const Index = () => {
   const [showControls, setShowControls] = useState(true);
   const [showEditFaces, setShowEditFaces] = useState(false);
   const [modelScene, setModelScene] = useState<THREE.Group | null>(null);
-  const [scrollStage, setScrollStage] = useState(0); // 0: initial, 1: state1, 2: reset, 3: state2
+  const [scrollStage, setScrollStage] = useState(0); // 0: initial, 1: state1, 2: reset, 3: state2, 4: reset from state2
 
   const animateToState1 = () => {
     setPosition({ x: 0.7, y: -1.5, z: 6.6 });
@@ -141,10 +141,18 @@ const Index = () => {
           // Reset → State 2
           setScrollStage(3);
           animateToState2();
+        } else if (scrollStage === 3) {
+          // State 2 → Reset
+          setScrollStage(4);
+          resetToDefault();
         }
       } else {
         // Scroll up: reverse through stages
-        if (scrollStage === 3) {
+        if (scrollStage === 4) {
+          // Reset → State 2
+          setScrollStage(3);
+          animateToState2();
+        } else if (scrollStage === 3) {
           // State 2 → Reset
           setScrollStage(2);
           resetToDefault();

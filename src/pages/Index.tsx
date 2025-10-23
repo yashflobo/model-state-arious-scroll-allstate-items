@@ -14,12 +14,12 @@ const Index = () => {
     y: 0,
     z: 0,
   });
-  const [sensitivity, setSensitivity] = useState(1.0);
+  const [sensitivity, setSensitivity] = useState(0.1);
   const [showState1Text, setShowState1Text] = useState(false);
   const [showState2Text, setShowState2Text] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [isFadingOut2, setIsFadingOut2] = useState(false);
-  const [currentAnimatingState, setCurrentAnimatingState] = useState<'state1' | 'state2' | null>(null);
+  const [currentAnimatingState, setCurrentAnimatingState] = useState<"state1" | "state2" | null>(null);
   const [showControls, setShowControls] = useState(true);
   const [showEditFaces, setShowEditFaces] = useState(false);
   const [modelScene, setModelScene] = useState<THREE.Group | null>(null);
@@ -33,7 +33,7 @@ const Index = () => {
       y: (-13 * Math.PI) / 180,
       z: (-63 * Math.PI) / 180,
     });
-    setCurrentAnimatingState('state1');
+    setCurrentAnimatingState("state1");
     setShowState1Text(false);
     setIsFadingOut(false);
     // Hide State 2 text with fade-out
@@ -54,7 +54,7 @@ const Index = () => {
       y: (13 * Math.PI) / 180,
       z: (63 * Math.PI) / 180,
     });
-    setCurrentAnimatingState('state2');
+    setCurrentAnimatingState("state2");
     setShowState2Text(false);
     setIsFadingOut2(false);
     // Hide State 1 text with fade-out
@@ -91,10 +91,10 @@ const Index = () => {
   };
 
   const handleAnimationProgress = (progress: number) => {
-    if (currentAnimatingState === 'state1' && progress >= 0.8 && !showState1Text) {
+    if (currentAnimatingState === "state1" && progress >= 0.8 && !showState1Text) {
       setShowState1Text(true);
     }
-    if (currentAnimatingState === 'state2' && progress >= 0.8 && !showState2Text) {
+    if (currentAnimatingState === "state2" && progress >= 0.8 && !showState2Text) {
       setShowState2Text(true);
     }
   };
@@ -114,13 +114,13 @@ const Index = () => {
 
     const handleScroll = (e: WheelEvent) => {
       e.preventDefault();
-      
+
       // Debounce scroll events
       if (isScrolling) return;
-      
+
       isScrolling = true;
       clearTimeout(scrollTimeout);
-      
+
       scrollTimeout = setTimeout(() => {
         isScrolling = false;
       }, 800);
@@ -160,10 +160,10 @@ const Index = () => {
       }
     };
 
-    window.addEventListener('wheel', handleScroll, { passive: false });
+    window.addEventListener("wheel", handleScroll, { passive: false });
 
     return () => {
-      window.removeEventListener('wheel', handleScroll);
+      window.removeEventListener("wheel", handleScroll);
       clearTimeout(scrollTimeout);
     };
   }, [scrollStage]);
@@ -186,7 +186,7 @@ const Index = () => {
             Reset
           </Button>
           <Button onClick={() => setShowControls(!showControls)} variant="secondary">
-            {showControls ? 'Hide' : 'Show'} Controls
+            {showControls ? "Hide" : "Show"} Controls
           </Button>
           <Button onClick={() => setShowEditFaces(!showEditFaces)} variant="secondary">
             Edit Faces
@@ -213,7 +213,9 @@ const Index = () => {
 
       {/* State 1 Text Display */}
       {showState1Text && (
-        <div className={`absolute right-8 top-[40%] -translate-y-1/2 z-20 ${isFadingOut ? 'animate-fade-out' : 'animate-fade-in'}`}>
+        <div
+          className={`absolute right-8 top-[40%] -translate-y-1/2 z-20 ${isFadingOut ? "animate-fade-out" : "animate-fade-in"}`}
+        >
           <div className="p-6 max-w-md">
             <h2 className="text-2xl font-bold mb-3 text-foreground">State 1 Active</h2>
             <p className="text-muted-foreground">
@@ -225,7 +227,9 @@ const Index = () => {
 
       {/* State 2 Text Display */}
       {showState2Text && (
-        <div className={`absolute left-8 top-[40%] -translate-y-1/2 z-20 ${isFadingOut2 ? 'animate-fade-out' : 'animate-fade-in'}`}>
+        <div
+          className={`absolute left-8 top-[40%] -translate-y-1/2 z-20 ${isFadingOut2 ? "animate-fade-out" : "animate-fade-in"}`}
+        >
           <div className="p-6 max-w-md">
             <h2 className="text-2xl font-bold mb-3 text-foreground">State 2 Active</h2>
             <p className="text-muted-foreground">
@@ -236,11 +240,11 @@ const Index = () => {
       )}
 
       {/* 3D Canvas */}
-      <Canvas3D 
-        position={position} 
-        scale={scale} 
-        rotation={rotation} 
-        sensitivity={sensitivity} 
+      <Canvas3D
+        position={position}
+        scale={scale}
+        rotation={rotation}
+        sensitivity={sensitivity}
         onAnimationProgress={handleAnimationProgress}
         onSceneReady={setModelScene}
       />

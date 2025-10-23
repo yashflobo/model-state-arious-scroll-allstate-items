@@ -25,10 +25,10 @@ export const Scene3D = ({
   sensitivity = 1.0,
   onAnimationProgress,
   onSceneReady,
-  ctMachineVisible,
-  ctMachinePosition,
-  ctMachineRotation,
-  ctMachineScale,
+  ctMachineVisible = false,
+  ctMachinePosition = { x: -0.40, y: 0.00, z: 8.30 },
+  ctMachineRotation = { x: 0, y: 0, z: 0 },
+  ctMachineScale = 0.10,
 }: Scene3DProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/Arious_3DLogo.glb");

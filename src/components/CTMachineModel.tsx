@@ -10,7 +10,12 @@ interface CTMachineModelProps {
   scale: number;
 }
 
-export const CTMachineModel = ({ visible, position, rotation, scale }: CTMachineModelProps) => {
+export const CTMachineModel = ({ 
+  visible, 
+  position = { x: 0, y: 0, z: 0 }, 
+  rotation = { x: 0, y: 0, z: 0 }, 
+  scale = 1 
+}: CTMachineModelProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/ct_machine.glb");
   const opacityRef = useRef(0);

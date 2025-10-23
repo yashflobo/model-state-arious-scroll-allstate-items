@@ -45,16 +45,16 @@ const Index = () => {
   // CT Machine state
   const [showCTMachineControls, setShowCTMachineControls] = useState(false);
   const [ctMachinePosition, setCTMachinePosition] = useState({ 
-    x: 2.5,  // To the right of main model
-    y: -1.0, // Slightly below center
-    z: 5.0   // In front of camera
+    x: -0.40,
+    y: 0.00,
+    z: 8.30
   });
   const [ctMachineRotation, setCTMachineRotation] = useState({
-    x: 0,
-    y: Math.PI / 4, // 45° to face camera
+    x: (9.0 * Math.PI) / 180,
+    y: (64.0 * Math.PI) / 180,
     z: 0,
   });
-  const [ctMachineScale, setCTMachineScale] = useState(1.5);
+  const [ctMachineScale, setCTMachineScale] = useState(0.10);
 
   // Compute visibility based on current stage
   const isCTMachineVisible = scrollStage === Stage.State1 || scrollStage === Stage.State1_5;
@@ -433,9 +433,9 @@ const Index = () => {
           }
           onScaleChange={setCTMachineScale}
           onReset={() => {
-            setCTMachinePosition({ x: 2.5, y: -1.0, z: 5.0 });
-            setCTMachineRotation({ x: 0, y: Math.PI / 4, z: 0 });
-            setCTMachineScale(1.5);
+            setCTMachinePosition({ x: -0.40, y: 0.00, z: 8.30 });
+            setCTMachineRotation({ x: (9.0 * Math.PI) / 180, y: (64.0 * Math.PI) / 180, z: 0 });
+            setCTMachineScale(0.10);
           }}
         />
       )}

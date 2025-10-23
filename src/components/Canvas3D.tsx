@@ -1,7 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { Environment, PerspectiveCamera } from '@react-three/drei';
 import { Scene3D } from './Scene3D';
-import { CTMachineModel } from './CTMachineModel';
 import * as THREE from 'three';
 
 interface Canvas3DProps {
@@ -46,7 +45,7 @@ export const Canvas3D = ({
         <pointLight position={[-10, -10, -5]} intensity={0.5} color="#8b5cf6" />
         <pointLight position={[10, 10, 5]} intensity={0.5} color="#6366f1" />
 
-        {/* 3D Model */}
+        {/* 3D Model with CT Machine as child */}
         <Scene3D 
           position={position} 
           scale={scale} 
@@ -54,14 +53,10 @@ export const Canvas3D = ({
           sensitivity={sensitivity} 
           onAnimationProgress={onAnimationProgress}
           onSceneReady={onSceneReady}
-        />
-
-        {/* CT Machine Model */}
-        <CTMachineModel
-          visible={ctMachineVisible}
-          position={ctMachinePosition}
-          rotation={ctMachineRotation}
-          scale={ctMachineScale}
+          ctMachineVisible={ctMachineVisible}
+          ctMachinePosition={ctMachinePosition}
+          ctMachineRotation={ctMachineRotation}
+          ctMachineScale={ctMachineScale}
         />
 
         {/* Environment for reflections */}

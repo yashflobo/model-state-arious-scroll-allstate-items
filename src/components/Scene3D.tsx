@@ -3,6 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import sampleTexture from "@/assets/sample-texture.png";
+import { CTMachineModel } from "./CTMachineModel";
 
 interface Scene3DProps {
   position?: { x: number; y: number; z: number };
@@ -11,6 +12,10 @@ interface Scene3DProps {
   sensitivity?: number;
   onAnimationProgress?: (progress: number) => void;
   onSceneReady?: (scene: THREE.Group) => void;
+  ctMachineVisible: boolean;
+  ctMachinePosition: { x: number; y: number; z: number };
+  ctMachineRotation: { x: number; y: number; z: number };
+  ctMachineScale: number;
 }
 
 export const Scene3D = ({
@@ -20,6 +25,10 @@ export const Scene3D = ({
   sensitivity = 1.0,
   onAnimationProgress,
   onSceneReady,
+  ctMachineVisible,
+  ctMachinePosition,
+  ctMachineRotation,
+  ctMachineScale,
 }: Scene3DProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/Arious_3DLogo.glb");
@@ -191,6 +200,14 @@ export const Scene3D = ({
       onPointerMove={handlePointerMove}
     >
       <primitive object={scene} />
+      
+      {/* CT Machine as child - moves with main model */}
+      <CTMachineModel
+        visible={ctMachineVisible}
+        position={ctMachinePosition}
+        rotation={ctMachineRotation}
+        scale={ctMachineScale}
+      />
     </group>
   );
 };

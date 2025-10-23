@@ -68,41 +68,89 @@ export const Scene3D = ({
     }
   }, [scene, onSceneReady]);
 
-  // Add image texture to one face of the model
+  // Helper function to add texture plane to a specific face
+  const addTexturePlaneToFace = (
+    mesh: THREE.Mesh,
+    texture: THREE.Texture,
+    faceIndex: number
+  ) => {
+    const geometry = mesh.geometry;
+    const position = geometry.attributes.position;
+    const index = geometry.index;
+
+    if (!index) return; // Skip if no index buffer
+
+    // Calculate face vertices (3 vertices per face)
+    const i0 = index.getX(faceIndex * 3);
+    const i1 = index.getX(faceIndex * 3 + 1);
+    const i2 = index.getX(faceIndex * 3 + 2);
+
+    // Get vertex positions
+    const v0 = new THREE.Vector3(position.getX(i0), position.getY(i0), position.getZ(i0));
+    const v1 = new THREE.Vector3(position.getX(i1), position.getY(i1), position.getZ(i1));
+    const v2 = new THREE.Vector3(position.getX(i2), position.getY(i2), position.getZ(i2));
+
+    // Calculate face center and normal
+    const center = new THREE.Vector3()
+      .add(v0)
+      .add(v1)
+      .add(v2)
+      .divideScalar(3);
+
+    const normal = new THREE.Vector3()
+      .crossVectors(
+        new THREE.Vector3().subVectors(v1, v0),
+        new THREE.Vector3().subVectors(v2, v0)
+      )
+      .normalize();
+
+    // Calculate face size
+    const edge1 = v0.distanceTo(v1);
+    const edge2 = v1.distanceTo(v2);
+    const edge3 = v2.distanceTo(v0);
+    const size = Math.max(edge1, edge2, edge3);
+
+    // Create textured plane
+    const planeGeometry = new THREE.PlaneGeometry(size, size);
+    const planeMaterial = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      side: THREE.DoubleSide,
+    });
+
+    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+    // Position and orient the plane
+    plane.position.copy(center);
+    plane.position.addScaledVector(normal, 0.001); // Offset slightly from surface
+    plane.lookAt(center.clone().add(normal));
+
+    // Add to mesh
+    mesh.add(plane);
+  };
+
+  // Apply texture to specific faces of specific meshes
   useEffect(() => {
     if (scene && groupRef.current) {
-      // Find the main mesh (first mesh in the scene)
-      const mesh = scene.children.find((child) => child instanceof THREE.Mesh) || scene.children[0];
+      // Load the sample texture
+      const textureLoader = new THREE.TextureLoader();
+      const texture = textureLoader.load(sampleTexture);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
 
-      if (mesh) {
-        // Calculate bounding box
-        const box = new THREE.Box3().setFromObject(mesh);
-        const boxSize = new THREE.Vector3();
-        box.getSize(boxSize);
+      // Target meshes and faces
+      const targetMeshes = ['Mesh006_1', 'Mesh006_2'];
+      const targetFaces = [1, 2]; // Face indices to texture
 
-        // Load texture
-        const textureLoader = new THREE.TextureLoader();
-        const tex = textureLoader.load(sampleTexture);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.minFilter = THREE.LinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-
-        // Create plane geometry for the +Z face (front)
-        const planeGeo = new THREE.PlaneGeometry(boxSize.x * 0.1, boxSize.y * 0.1);
-        const planeMat = new THREE.MeshBasicMaterial({
-          map: tex,
-          transparent: true,
-          side: THREE.DoubleSide,
-        });
-        const face = new THREE.Mesh(planeGeo, planeMat);
-
-        // Position on the +Z face
-        const EPS = 0.001;
-        face.position.set(0, 0, boxSize.z / 2 + EPS);
-
-        // Add to the mesh
-        mesh.add(face);
-      }
+      scene.traverse((child) => {
+        if (child instanceof THREE.Mesh && targetMeshes.includes(child.name)) {
+          console.log(`Applying texture to ${child.name} faces:`, targetFaces);
+          targetFaces.forEach((faceIndex) => {
+            addTexturePlaneToFace(child, texture, faceIndex);
+          });
+        }
+      });
     }
   }, [scene]);
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Canvas3D } from "@/components/Canvas3D";
 import { ModelControls } from "@/components/ModelControls";
 import { EditFacesPanel } from "@/components/EditFacesPanel";
@@ -23,8 +23,6 @@ const Index = () => {
   const [showControls, setShowControls] = useState(true);
   const [showEditFaces, setShowEditFaces] = useState(false);
   const [modelScene, setModelScene] = useState<THREE.Group | null>(null);
-  const [scrollStage, setScrollStage] = useState(0); // 0: initial, 1: state1, 2: reset, 3: state2
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   const animateToState1 = () => {
     setPosition({ x: 0.7, y: -1.5, z: 6.6 });
@@ -107,66 +105,6 @@ const Index = () => {
   const handleRotationChange = (axis: "x" | "y" | "z", value: number) => {
     setRotation((prev) => ({ ...prev, [axis]: value }));
   };
-
-  // Scroll handler with debounce
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
-  
-  useEffect(() => {
-    const handleScroll = (e: WheelEvent) => {
-      e.preventDefault();
-      
-      // Clear previous timeout
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-      
-      // Debounce scroll to prevent rapid transitions
-      scrollTimeoutRef.current = setTimeout(() => {
-        const scrollingDown = e.deltaY > 0;
-        
-        if (scrollingDown) {
-          // Scroll down: progress through stages
-          if (scrollStage === 0) {
-            // Initial → State 1
-            setScrollStage(1);
-            animateToState1();
-          } else if (scrollStage === 1) {
-            // State 1 → Reset
-            setScrollStage(2);
-            resetToDefault();
-          } else if (scrollStage === 2) {
-            // Reset → State 2
-            setScrollStage(3);
-            animateToState2();
-          }
-        } else {
-          // Scroll up: go back through stages
-          if (scrollStage === 3) {
-            // State 2 → Reset
-            setScrollStage(2);
-            resetToDefault();
-          } else if (scrollStage === 2) {
-            // Reset → State 1
-            setScrollStage(1);
-            animateToState1();
-          } else if (scrollStage === 1) {
-            // State 1 → Initial
-            setScrollStage(0);
-            resetToDefault();
-          }
-        }
-      }, 300); // 300ms debounce
-    };
-    
-    window.addEventListener('wheel', handleScroll, { passive: false });
-    
-    return () => {
-      window.removeEventListener('wheel', handleScroll);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, [scrollStage]);
 
   return (
     <main className="relative w-full h-screen overflow-hidden bg-black">

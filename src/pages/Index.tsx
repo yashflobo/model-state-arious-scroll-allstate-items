@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Canvas3D } from "@/components/Canvas3D";
 import { ModelControls } from "@/components/ModelControls";
 import { EditFacesPanel } from "@/components/EditFacesPanel";
+import { State1_5Controls } from "@/components/State1_5Controls";
 import { Button } from "@/components/ui/button";
 import * as THREE from "three";
 
@@ -9,9 +10,10 @@ import * as THREE from "three";
 enum Stage {
   Initial = 0, // reset
   State1 = 1,
-  Reset1 = 2, // reset after State1
-  State2 = 3,
-  Reset2 = 4, // reset after State2
+  State1_5 = 2, // intermediate state between State1 and Reset1
+  Reset1 = 3, // reset after State1
+  State2 = 4,
+  Reset2 = 5, // reset after State2
 }
 const MAX_STAGE = Stage.Reset2 as const;
 
@@ -32,9 +34,18 @@ const Index = () => {
   const [currentAnimatingState, setCurrentAnimatingState] = useState<"state1" | "state2" | null>(null);
   const [showControls, setShowControls] = useState(true);
   const [showEditFaces, setShowEditFaces] = useState(false);
+  const [showState1_5Controls, setShowState1_5Controls] = useState(false);
   const [modelScene, setModelScene] = useState<THREE.Group | null>(null);
   const [scrollStage, setScrollStage] = useState<Stage>(Stage.Initial);
   const isTransitioningRef = useRef(false);
+
+  // State 1.5 camera settings (adjustable)
+  const [state1_5Position, setState1_5Position] = useState({ x: 0.5, y: -1.2, z: 6.0 });
+  const [state1_5Rotation, setState1_5Rotation] = useState({
+    x: (-15 * Math.PI) / 180,
+    y: (-10 * Math.PI) / 180,
+    z: (-60 * Math.PI) / 180,
+  });
 
   // Check for reduced motion preference
   const prefersReduced =
@@ -64,6 +75,34 @@ const Index = () => {
       }
 
       // Resolve after animation completes (based on Scene3D's animation duration)
+      setTimeout(resolve, prefersReduced ? 0 : 1500);
+    });
+  };
+
+  const animateToState1_5 = (opts?: { direction?: "forward" | "backward" }): Promise<void> => {
+    return new Promise((resolve) => {
+      setPosition(state1_5Position);
+      setScale(20000);
+      setRotation(state1_5Rotation);
+      setCurrentAnimatingState(null);
+
+      // Hide all text
+      if (showState1Text) {
+        setIsFadingOut(true);
+        setTimeout(() => {
+          setShowState1Text(false);
+          setIsFadingOut(false);
+        }, 300);
+      }
+      if (showState2Text) {
+        setIsFadingOut2(true);
+        setTimeout(() => {
+          setShowState2Text(false);
+          setIsFadingOut2(false);
+        }, 300);
+      }
+
+      // Resolve after animation completes
       setTimeout(resolve, prefersReduced ? 0 : 1500);
     });
   };
@@ -147,6 +186,9 @@ const Index = () => {
     switch (next) {
       case Stage.State1:
         await animateToState1({ direction });
+        break;
+      case Stage.State1_5:
+        await animateToState1_5({ direction });
         break;
       case Stage.State2:
         await animateToState2({ direction });
@@ -246,8 +288,9 @@ const Index = () => {
           <span className="bg-gradient-primary bg-clip-text text-slate-50">ARious Logo</span> Model
         </h1>
         <p className="mt-2 text-muted-foreground text-sm md:text-base">Hover to interact with the model</p>
-        <div className="flex gap-3 mt-4 justify-center">
+        <div className="flex gap-3 mt-4 justify-center flex-wrap">
           <Button onClick={() => animateToState1()}>State 1</Button>
+          <Button onClick={() => animateToState1_5()}>State 1.5</Button>
           <Button onClick={() => animateToState2()}>State 2</Button>
           <Button onClick={() => resetToDefault()} variant="outline">
             Reset
@@ -257,6 +300,9 @@ const Index = () => {
           </Button>
           <Button onClick={() => setShowEditFaces(!showEditFaces)} variant="secondary">
             Edit Faces
+          </Button>
+          <Button onClick={() => setShowState1_5Controls(!showState1_5Controls)} variant="secondary">
+            State 1.5 Controls
           </Button>
         </div>
       </div>
@@ -277,6 +323,20 @@ const Index = () => {
 
       {/* Edit Faces Panel */}
       {showEditFaces && <EditFacesPanel scene={modelScene} />}
+
+      {/* State 1.5 Controls */}
+      {showState1_5Controls && (
+        <State1_5Controls
+          position={state1_5Position}
+          rotation={state1_5Rotation}
+          onPositionChange={(axis, value) =>
+            setState1_5Position((prev) => ({ ...prev, [axis]: value }))
+          }
+          onRotationChange={(axis, value) =>
+            setState1_5Rotation((prev) => ({ ...prev, [axis]: value }))
+          }
+        />
+      )}
 
       {/* State 1 Text Display */}
       {showState1Text && (

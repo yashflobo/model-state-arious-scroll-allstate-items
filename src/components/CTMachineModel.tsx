@@ -1,5 +1,5 @@
 import { useRef, useMemo } from "react";
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, TransformControls } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -8,15 +8,24 @@ interface CTMachineModelProps {
   position: { x: number; y: number; z: number };
   rotation: { x: number; y: number; z: number };
   scale: number;
+  transformMode?: "translate" | "rotate" | "scale";
+  onPositionChange?: (position: { x: number; y: number; z: number }) => void;
+  onRotationChange?: (rotation: { x: number; y: number; z: number }) => void;
+  onScaleChange?: (scale: number) => void;
 }
 
 export const CTMachineModel = ({ 
   visible, 
   position = { x: 0, y: 0, z: 0 }, 
   rotation = { x: 0, y: 0, z: 0 }, 
-  scale = 1 
+  scale = 1,
+  transformMode,
+  onPositionChange,
+  onRotationChange,
+  onScaleChange,
 }: CTMachineModelProps) => {
   const groupRef = useRef<THREE.Group>(null);
+  const transformControlsRef = useRef<any>(null);
   const { scene } = useGLTF("/models/ct_machine.glb");
   const opacityRef = useRef(0);
   const targetOpacity = visible ? 1 : 0;
@@ -46,15 +55,56 @@ export const CTMachineModel = ({
     }
   });
 
+  // Handle transform changes
+  const handleTransformChange = () => {
+    if (!groupRef.current) return;
+
+    if (onPositionChange) {
+      onPositionChange({
+        x: groupRef.current.position.x,
+        y: groupRef.current.position.y,
+        z: groupRef.current.position.z,
+      });
+    }
+
+    if (onRotationChange) {
+      onRotationChange({
+        x: groupRef.current.rotation.x,
+        y: groupRef.current.rotation.y,
+        z: groupRef.current.rotation.z,
+      });
+    }
+
+    if (onScaleChange) {
+      onScaleChange(groupRef.current.scale.x);
+    }
+  };
+
   return (
-    <group
-      ref={groupRef}
-      position={[position.x, position.y, position.z]}
-      rotation={[rotation.x, rotation.y, rotation.z]}
-      scale={scale}
-    >
-      <primitive object={clonedScene} />
-    </group>
+    <>
+      <group
+        ref={groupRef}
+        position={[position.x, position.y, position.z]}
+        rotation={[rotation.x, rotation.y, rotation.z]}
+        scale={scale}
+      >
+        <primitive object={clonedScene} />
+      </group>
+      
+      {/* Transform Controls for intuitive manipulation */}
+      {transformMode && groupRef.current && (
+        <TransformControls
+          ref={transformControlsRef}
+          object={groupRef.current}
+          mode={transformMode}
+          onObjectChange={handleTransformChange}
+          showX={true}
+          showY={true}
+          showZ={true}
+          size={0.5}
+        />
+      )}
+    </>
   );
 };
 

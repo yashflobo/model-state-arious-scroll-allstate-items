@@ -14,6 +14,10 @@ interface Canvas3DProps {
   ctMachinePosition: { x: number; y: number; z: number };
   ctMachineRotation: { x: number; y: number; z: number };
   ctMachineScale: number;
+  ctMachineTransformMode?: "translate" | "rotate" | "scale";
+  onCTMachinePositionChange?: (position: { x: number; y: number; z: number }) => void;
+  onCTMachineRotationChange?: (rotation: { x: number; y: number; z: number }) => void;
+  onCTMachineScaleChange?: (scale: number) => void;
 }
 
 export const Canvas3D = ({ 
@@ -26,7 +30,11 @@ export const Canvas3D = ({
   ctMachineVisible,
   ctMachinePosition,
   ctMachineRotation,
-  ctMachineScale
+  ctMachineScale,
+  ctMachineTransformMode,
+  onCTMachinePositionChange,
+  onCTMachineRotationChange,
+  onCTMachineScaleChange,
 }: Canvas3DProps) => {
   return (
     <div className="w-full h-screen">
@@ -53,10 +61,14 @@ export const Canvas3D = ({
           sensitivity={sensitivity} 
           onAnimationProgress={onAnimationProgress}
           onSceneReady={onSceneReady}
-          ctMachineVisible={ctMachineVisible}
-          ctMachinePosition={ctMachinePosition}
-          ctMachineRotation={ctMachineRotation}
-          ctMachineScale={ctMachineScale}
+        ctMachineVisible={ctMachineVisible}
+        ctMachinePosition={ctMachinePosition}
+        ctMachineRotation={ctMachineRotation}
+        ctMachineScale={ctMachineScale}
+        ctMachineTransformMode={ctMachineTransformMode}
+        onCTMachinePositionChange={onCTMachinePositionChange}
+        onCTMachineRotationChange={onCTMachineRotationChange}
+        onCTMachineScaleChange={onCTMachineScaleChange}
         />
 
         {/* Environment for reflections */}

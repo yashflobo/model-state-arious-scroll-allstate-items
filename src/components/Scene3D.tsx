@@ -16,10 +16,6 @@ interface Scene3DProps {
   ctMachinePosition: { x: number; y: number; z: number };
   ctMachineRotation: { x: number; y: number; z: number };
   ctMachineScale: number;
-  ctMachineTransformMode?: "translate" | "rotate" | "scale";
-  onCTMachinePositionChange?: (position: { x: number; y: number; z: number }) => void;
-  onCTMachineRotationChange?: (rotation: { x: number; y: number; z: number }) => void;
-  onCTMachineScaleChange?: (scale: number) => void;
 }
 
 export const Scene3D = ({
@@ -33,10 +29,6 @@ export const Scene3D = ({
   ctMachinePosition = { x: -0.40, y: 0.00, z: -2.0 },
   ctMachineRotation = { x: 0, y: 0, z: 0 },
   ctMachineScale = 1.5,
-  ctMachineTransformMode,
-  onCTMachinePositionChange,
-  onCTMachineRotationChange,
-  onCTMachineScaleChange,
 }: Scene3DProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/Arious_3DLogo.glb");
@@ -215,10 +207,6 @@ export const Scene3D = ({
         position={ctMachinePosition}
         rotation={ctMachineRotation}
         scale={ctMachineScale}
-        transformMode={ctMachineTransformMode}
-        onPositionChange={onCTMachinePositionChange}
-        onRotationChange={onCTMachineRotationChange}
-        onScaleChange={onCTMachineScaleChange}
       />
     </group>
   );

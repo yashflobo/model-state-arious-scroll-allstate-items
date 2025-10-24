@@ -44,7 +44,6 @@ const Index = () => {
 
   // CT Machine state
   const [showCTMachineControls, setShowCTMachineControls] = useState(false);
-  const [ctMachineTransformMode, setCTMachineTransformMode] = useState<"translate" | "rotate" | "scale" | undefined>(undefined);
   const [ctMachinePosition, setCTMachinePosition] = useState({ 
     x: -0.40,
     y: 0.00,
@@ -371,28 +370,6 @@ const Index = () => {
           <Button onClick={() => setShowCTMachineControls(!showCTMachineControls)} variant="secondary">
             CT Machine Controls
           </Button>
-          {isCTMachineVisible && (
-            <>
-              <Button 
-                onClick={() => setCTMachineTransformMode(ctMachineTransformMode === "translate" ? undefined : "translate")}
-                variant={ctMachineTransformMode === "translate" ? "default" : "outline"}
-              >
-                {ctMachineTransformMode === "translate" ? "✓ Move" : "Move"}
-              </Button>
-              <Button 
-                onClick={() => setCTMachineTransformMode(ctMachineTransformMode === "rotate" ? undefined : "rotate")}
-                variant={ctMachineTransformMode === "rotate" ? "default" : "outline"}
-              >
-                {ctMachineTransformMode === "rotate" ? "✓ Rotate" : "Rotate"}
-              </Button>
-              <Button 
-                onClick={() => setCTMachineTransformMode(ctMachineTransformMode === "scale" ? undefined : "scale")}
-                variant={ctMachineTransformMode === "scale" ? "default" : "outline"}
-              >
-                {ctMachineTransformMode === "scale" ? "✓ Scale" : "Scale"}
-              </Button>
-            </>
-          )}
         </div>
       </div>
 
@@ -503,10 +480,6 @@ const Index = () => {
         ctMachinePosition={ctMachinePosition}
         ctMachineRotation={ctMachineRotation}
         ctMachineScale={ctMachineScale}
-        ctMachineTransformMode={ctMachineTransformMode}
-        onCTMachinePositionChange={setCTMachinePosition}
-        onCTMachineRotationChange={setCTMachineRotation}
-        onCTMachineScaleChange={setCTMachineScale}
       />
 
       {/* Subtle glow effect */}
